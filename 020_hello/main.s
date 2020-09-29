@@ -112,7 +112,7 @@ SkipSecurityCheck:
 	moveq.l	#0x3F, %d7		/* clear the CRAM */
 ClearCRAM:
 	move.w	%d0, 0xC00000		/* write 0 to the data port */
-	dbf	%d7, ClearCRAM		/*clear the cram*/
+	dbf	%d7, ClearCRAM		/* clear the cram */
 
 	/*move.w	#0x2300, %sr*/		/* Enable interrupts */
 	jmp.s	.
