@@ -106,5 +106,13 @@ EntryPoint:
 	move.l	#0x53454741, 0xA14000
 SkipSecurityCheck:
 
+	/* Clear CRAM */
+	moveq.l	#0x0, %d0		/* clear d0 */
+	move.l	#0xC0000000, 0xC00004	/* Set VDP to CRAM write */
+	moveq.l	#0x3F, %d7		/* clear the CRAM */
+ClearCRAM:
+	move.w	%d0, 0xC00000		/* write 0 to the data port */
+	dbf	%d7, ClearCRAM		/*clear the cram*/
+
 	/*move.w	#0x2300, %sr*/		/* Enable interrupts */
 	jmp.s	.
