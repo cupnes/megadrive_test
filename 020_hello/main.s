@@ -149,6 +149,16 @@ _ChLoop:
 	/* 0xC000+(((0x04*0x40)+0x08)*2) = 0xC210 */
 	move.l	#(0x40000000)|((0xC210)&0x3FFF)<<16|(0xC210)>>14, 0x00C00004
 	move.w	#0x1, 0x00C00000
+	move.w	#0x2, 0x00C00000
+	move.w	#0x3, 0x00C00000
+	move.w	#0x3, 0x00C00000
+	move.w	#0x4, 0x00C00000
+	move.w	#0x0, 0x00C00000
+	move.w	#0x5, 0x00C00000
+	move.w	#0x4, 0x00C00000
+	move.w	#0x6, 0x00C00000
+	move.w	#0x3, 0x00C00000
+	move.w	#0x7, 0x00C00000
 
 	jmp.s	.
 
@@ -160,7 +170,7 @@ InitialVDPRegisterSettings:
 	dc.b	0x07			/* 04: Pattern table for Scroll Plane B at 0xA000 (bits 0-2) */
 	dc.b	0x78			/* 05: Sprite table at 0xE000 (bits 0-6) */
 	dc.b	0x00			/* 06: Unused */
-	dc.b	0x0D			/* 07: Background colour - bits 0-3 = colour, bits 4-5 = palette */
+	dc.b	0x0D			/* 07: Background color - bits 0-3 = color, bits 4-5 = palette */
 	dc.b	0x00			/* 08: Unused */
 	dc.b	0x00			/* 09: Unused */
 	dc.b	0x08			/* 10: Frequency of Horiz. interrupt in Rasters (number of lines travelled by the beam) */
@@ -179,22 +189,22 @@ InitialVDPRegisterSettings:
 	dc.b	0x80			/* 23: DMA source address hi byte, memory-to-VRAM mode (bits 6-7) */
 
 Palette:
-	dc.w	0x0000			/* Colour 0 - Transparent */
-	dc.w	0x000E			/* Colour 1 - Red */
-	dc.w	0x00E0			/* Colour 2 - Green */
-	dc.w	0x0E00			/* Colour 3 - Blue */
-	dc.w	0x0000			/* Colour 4 - Black */
-	dc.w	0x0EEE			/* Colour 5 - White */
-	dc.w	0x00EE			/* Colour 6 - Yellow */
-	dc.w	0x008E			/* Colour 7 - Orange */
-	dc.w	0x0E0E			/* Colour 8 - Pink */
-	dc.w	0x0808			/* Colour 9 - Purple */
-	dc.w	0x0444			/* Colour A - Dark grey */
-	dc.w	0x0888			/* Colour B - Light grey */
-	dc.w	0x0EE0			/* Colour C - Turquoise */
-	dc.w	0x000A			/* Colour D - Maroon */
-	dc.w	0x0600			/* Colour E - Navy blue */
-	dc.w	0x0060			/* Colour F - Dark green */
+	dc.w	0x0000			/* Color 0 - Transparent */
+	dc.w	0x000E			/* Color 1 - Red */
+	dc.w	0x00E0			/* Color 2 - Green */
+	dc.w	0x0E00			/* Color 3 - Blue */
+	dc.w	0x0000			/* Color 4 - Black */
+	dc.w	0x0EEE			/* Color 5 - White */
+	dc.w	0x00EE			/* Color 6 - Yellow */
+	dc.w	0x008E			/* Color 7 - Orange */
+	dc.w	0x0E0E			/* Color 8 - Pink */
+	dc.w	0x0808			/* Color 9 - Purple */
+	dc.w	0x0444			/* Color A - Dark grey */
+	dc.w	0x0888			/* Color B - Light grey */
+	dc.w	0x0EE0			/* Color C - Turquoise */
+	dc.w	0x000A			/* Color D - Maroon */
+	dc.w	0x0600			/* Color E - Navy blue */
+	dc.w	0x0060			/* Color F - Dark green */
 
 Characters:
 	dc.l	0x00000000		/* Character 0 - SPC */
