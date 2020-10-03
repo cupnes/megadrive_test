@@ -225,56 +225,56 @@ Characters:
 	dc.l	0x11000110
 	dc.l	0x00000000
 
-	dc.l	0x11111110		/* Character 2 - E */
-	dc.l	0x11000000
-	dc.l	0x11000000
-	dc.l	0x11111110
-	dc.l	0x11000000
-	dc.l	0x11000000
-	dc.l	0x11111110
+	dc.l	0x22222220		/* Character 2 - E */
+	dc.l	0x22000000
+	dc.l	0x22000000
+	dc.l	0x22222220
+	dc.l	0x22000000
+	dc.l	0x22000000
+	dc.l	0x22222220
 	dc.l	0x00000000
 
-	dc.l	0x11000000		/* Character 3 - L */
-	dc.l	0x11000000
-	dc.l	0x11000000
-	dc.l	0x11000000
-	dc.l	0x11000000
-	dc.l	0x11111110
-	dc.l	0x11111110
+	dc.l	0x33000000		/* Character 3 - L */
+	dc.l	0x33000000
+	dc.l	0x33000000
+	dc.l	0x33000000
+	dc.l	0x33000000
+	dc.l	0x33333330
+	dc.l	0x33333330
 	dc.l	0x00000000
 
-	dc.l	0x01111100		/* Character 4 - O */
-	dc.l	0x11101110
-	dc.l	0x11000110
-	dc.l	0x11000110
-	dc.l	0x11000110
-	dc.l	0x11101110
-	dc.l	0x01111100
+	dc.l	0x04444400		/* Character 4 - O */
+	dc.l	0x44404440
+	dc.l	0x44000440
+	dc.l	0x44000440
+	dc.l	0x44000440
+	dc.l	0x44404440
+	dc.l	0x04444400
 	dc.l	0x00000000
 
-	dc.l	0x11000110		/* Character 5 - W */
-	dc.l	0x11000110
-	dc.l	0x11000110
-	dc.l	0x11000110
-	dc.l	0x11010110
-	dc.l	0x11101110
-	dc.l	0x11000110
+	dc.l	0x55000550		/* Character 5 - W */
+	dc.l	0x55000550
+	dc.l	0x55000550
+	dc.l	0x55000550
+	dc.l	0x55050550
+	dc.l	0x55505550
+	dc.l	0x55000550
 	dc.l	0x00000000
 
-	dc.l	0x11111100		/* Character 6 - R */
-	dc.l	0x11000110
-	dc.l	0x11001100
-	dc.l	0x11111100
-	dc.l	0x11001110
-	dc.l	0x11000110
-	dc.l	0x11000110
+	dc.l	0x66666600		/* Character 6 - R */
+	dc.l	0x66000660
+	dc.l	0x66006600
+	dc.l	0x66666600
+	dc.l	0x66006660
+	dc.l	0x66000660
+	dc.l	0x66000660
 	dc.l	0x00000000
 
-	dc.l	0x11111000		/* Character 7 - D */
-	dc.l	0x11001110
-	dc.l	0x11000110
-	dc.l	0x11000110
-	dc.l	0x11000110
-	dc.l	0x11001110
-	dc.l	0x11111000
+	dc.l	0x77777000		/* Character 7 - D */
+	dc.l	0x77007770
+	dc.l	0x77000770
+	dc.l	0x77000770
+	dc.l	0x77000770
+	dc.l	0x77007770
+	dc.l	0x77777000
 	dc.l	0x00000000
