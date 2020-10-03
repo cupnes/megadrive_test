@@ -97,14 +97,25 @@ ExceptionHandler:
 	jmp.s	.
 
 EntryPoint:
-	move.w	#0x2700, %sr		/* Disable interupts */
+	/*move.w	#0x2700, %sr*/		/* Disable interupts */
 
-	/* Check Version Number */
-	move.b	0xA10001, %d0
-	andi.b	#0x0f, %d0
+	/* Check Version Number & Write TMSS */
+	move.b	0x00A10001, %d0
+	andi.b	#0x0F, %d0
 	beq.s	SkipSecurityCheck
-	move.l	#0x53454741, 0xA14000
+	move.l	#0x53454741, 0x00A14000
 SkipSecurityCheck:
+	move.w	0x00C00004, %d0		/* Check VDP */
+
+	/* Init VDP */
+	lea	InitialVDPRegisterSettings, %a0
+	move.w	#0x18-1, %d0
+	move.w	#0x8000, %d1
+_Copy:
+	move.b	(%a0)+, %d1
+	move.w	%d1, 0x00C00004
+	addi.w	#0x0100, %d1
+	dbra	%d0, _Copy
 
 	/* Clear CRAM */
 	moveq.l	#0x0, %d0		/* clear d0 */
@@ -115,4 +126,123 @@ ClearCRAM:
 	dbf	%d7, ClearCRAM		/* clear the cram */
 
 	/*move.w	#0x2300, %sr*/		/* Enable interrupts */
+
+	/* Main */
+
+	/* Init Palette */
+	move.l	#0xC0000000, 0xC00004
+	lea	Palette, %a0
+	move.l	#0x07, %d0
+_Loop:
+	move.l	(%a0)+, 0x00C00000
+	dbra	%d0, _Loop
+
 	jmp.s	.
+
+InitialVDPRegisterSettings:
+	dc.b	0x14			/* 00: Mode Register 1 */
+	dc.b	0x74			/* 01: Vert. interrupt on, display on, DMA on, V28 mode (28 cells vertically), + bit 2 */
+	dc.b	0x30			/* 02: Pattern table for Scroll Plane A at 0xC000 (bits 3-5) */
+	dc.b	0x00			/* 03: Pattern table for Window Plane at 0x10000 (bits 1-5) */
+	dc.b	0x07			/* 04: Pattern table for Scroll Plane B at 0xA000 (bits 0-2) */
+	dc.b	0x78			/* 05: Sprite table at 0xE000 (bits 0-6) */
+	dc.b	0x00			/* 06: Unused */
+	dc.b	0x0D			/* 07: Background colour - bits 0-3 = colour, bits 4-5 = palette */
+	dc.b	0x00			/* 08: Unused */
+	dc.b	0x00			/* 09: Unused */
+	dc.b	0x08			/* 10: Frequency of Horiz. interrupt in Rasters (number of lines travelled by the beam) */
+	dc.b	0x00			/* 11: External interrupts on, V/H scrolling on */
+	dc.b	0x81			/* 12: Shadows and highlights off, interlace off, H40 mode (40 cells horizontally) */
+	dc.b	0x3F			/* 13: Horiz. scroll table at 0xD000 (bits 0-5) */
+	dc.b	0x00			/* 14: Unused */
+	dc.b	0x02			/* 15: Autoincrement off */
+	dc.b	0x01			/* 16: Vert. scroll 32, Horiz. scroll 64 */
+	dc.b	0x00			/* 17: Window Plane X pos 0 left (pos in bits 0-4, left/right in bit 7) */
+	dc.b	0x00			/* 18: Window Plane Y pos 0 up (pos in bits 0-4, up/down in bit 7) */
+	dc.b	0xFF			/* 19: DMA length lo byte */
+	dc.b	0xFF			/* 20: DMA length hi byte */
+	dc.b	0x00			/* 21: DMA source address lo byte */
+	dc.b	0x00			/* 22: DMA source address mid byte */
+	dc.b	0x80			/* 23: DMA source address hi byte, memory-to-VRAM mode (bits 6-7) */
+
+Palette:
+	dc.w	0x0000			/* Colour 0 - Transparent */
+	dc.w	0x000E			/* Colour 1 - Red */
+	dc.w	0x00E0			/* Colour 2 - Green */
+	dc.w	0x0E00			/* Colour 3 - Blue */
+	dc.w	0x0000			/* Colour 4 - Black */
+	dc.w	0x0EEE			/* Colour 5 - White */
+	dc.w	0x00EE			/* Colour 6 - Yellow */
+	dc.w	0x008E			/* Colour 7 - Orange */
+	dc.w	0x0E0E			/* Colour 8 - Pink */
+	dc.w	0x0808			/* Colour 9 - Purple */
+	dc.w	0x0444			/* Colour A - Dark grey */
+	dc.w	0x0888			/* Colour B - Light grey */
+	dc.w	0x0EE0			/* Colour C - Turquoise */
+	dc.w	0x000A			/* Colour D - Maroon */
+	dc.w	0x0600			/* Colour E - Navy blue */
+	dc.w	0x0060			/* Colour F - Dark green */
+
+Characters:
+	dc.l	0x11000110			/* Character 0 - H */
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x11111110
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x00000000
+
+	dc.l	0x11111110			/* Character 1 - E */
+	dc.l	0x11000000
+	dc.l	0x11000000
+	dc.l	0x11111110
+	dc.l	0x11000000
+	dc.l	0x11000000
+	dc.l	0x11111110
+	dc.l	0x00000000
+
+	dc.l	0x11000000			/* Character 2 - L */
+	dc.l	0x11000000
+	dc.l	0x11000000
+	dc.l	0x11000000
+	dc.l	0x11000000
+	dc.l	0x11111110
+	dc.l	0x11111110
+	dc.l	0x00000000
+
+	dc.l	0x01111100			/* Character 3 - O */
+	dc.l	0x11101110
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x11101110
+	dc.l	0x01111100
+	dc.l	0x00000000
+
+	dc.l	0x11000110			/* Character 4 - W */
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x11010110
+	dc.l	0x11101110
+	dc.l	0x11000110
+	dc.l	0x00000000
+
+	dc.l	0x11111100			/* Character 5 - R */
+	dc.l	0x11000110
+	dc.l	0x11001100
+	dc.l	0x11111100
+	dc.l	0x11001110
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x00000000
+
+	dc.l	0x11111000			/* Character 6 - D */
+	dc.l	0x11001110
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x11000110
+	dc.l	0x11001110
+	dc.l	0x11111000
+	dc.l	0x00000000
