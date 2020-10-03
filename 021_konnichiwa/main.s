@@ -168,7 +168,7 @@ InitialVDPRegisterSettings:
 	dc.b	0x07			/* 04: Pattern table for Scroll Plane B at 0xA000 (bits 0-2) */
 	dc.b	0x78			/* 05: Sprite table at 0xE000 (bits 0-6) */
 	dc.b	0x00			/* 06: Unused */
-	dc.b	0x0F			/* 07: Background color - bits 0-3 = color, bits 4-5 = palette */
+	dc.b	0x0E			/* 07: Background color - bits 0-3 = color, bits 4-5 = palette */
 	dc.b	0x00			/* 08: Unused */
 	dc.b	0x00			/* 09: Unused */
 	dc.b	0x08			/* 10: Frequency of Horiz. interrupt in Rasters (number of lines travelled by the beam) */
@@ -277,31 +277,31 @@ Characters:
 	dc.l	0x11111000
 	dc.l	0x00000000
 
-	dc.l	0x05555550		/* Character 8 - こ */
+	dc.l	0x02222220		/* Character 8 - こ */
 	dc.l	0x00000000
 	dc.l	0x00000000
-	dc.l	0x05000000
-	dc.l	0x50000000
-	dc.l	0x50000000
-	dc.l	0x05555550
-	dc.l	0x00000000
-
-	dc.l	0x00550000		/* Character 9 - ん */
-	dc.l	0x00500000
-	dc.l	0x05500000
-	dc.l	0x05550000
-	dc.l	0x55050000
-	dc.l	0x50005050
-	dc.l	0x50005550
+	dc.l	0x02000000
+	dc.l	0x20000000
+	dc.l	0x20000000
+	dc.l	0x02222220
 	dc.l	0x00000000
 
-	dc.l	0x50000000		/* Character A - に */
-	dc.l	0x50055550
-	dc.l	0x50000000
-	dc.l	0x50000000
-	dc.l	0x50050000
-	dc.l	0x50500000
-	dc.l	0x50055550
+	dc.l	0x00330000		/* Character 9 - ん */
+	dc.l	0x00300000
+	dc.l	0x03300000
+	dc.l	0x03330000
+	dc.l	0x33030000
+	dc.l	0x30003030
+	dc.l	0x30003330
+	dc.l	0x00000000
+
+	dc.l	0x40000000		/* Character A - に */
+	dc.l	0x40044440
+	dc.l	0x40000000
+	dc.l	0x40000000
+	dc.l	0x40040000
+	dc.l	0x40400000
+	dc.l	0x40044440
 	dc.l	0x00000000
 
 	dc.l	0x00500000		/* Character B - ち */
@@ -313,38 +313,38 @@ Characters:
 	dc.l	0x05555500
 	dc.l	0x00000000
 
-	dc.l	0x50005000		/* Character C - は */
-	dc.l	0x50555500
-	dc.l	0x50005000
-	dc.l	0x50055000
-	dc.l	0x50505500
-	dc.l	0x50505050
-	dc.l	0x50050000
+	dc.l	0x60006000		/* Character C - は */
+	dc.l	0x60666600
+	dc.l	0x60006000
+	dc.l	0x60066000
+	dc.l	0x60606600
+	dc.l	0x60606060
+	dc.l	0x60060000
 	dc.l	0x00000000
 
-	dc.l	0x05000500		/* Character D - せ */
-	dc.l	0x55555550
-	dc.l	0x05000500
-	dc.l	0x05000500
-	dc.l	0x05055500
-	dc.l	0x05000000
-	dc.l	0x00555500
+	dc.l	0x07000700		/* Character D - せ */
+	dc.l	0x77777770
+	dc.l	0x07000700
+	dc.l	0x07000700
+	dc.l	0x07077700
+	dc.l	0x07000000
+	dc.l	0x00777700
 	dc.l	0x00000000
 
-	dc.l	0x00500000		/* Character E - か */
-	dc.l	0x05000500
-	dc.l	0x55555050
-	dc.l	0x05005050
-	dc.l	0x05005050
-	dc.l	0x50005050
-	dc.l	0x50555000
+	dc.l	0x00800000		/* Character E - か */
+	dc.l	0x08000800
+	dc.l	0x88888080
+	dc.l	0x08008080
+	dc.l	0x08008080
+	dc.l	0x80008080
+	dc.l	0x80888000
 	dc.l	0x00000000
 
-	dc.l	0x50000500		/* Character F - い */
-	dc.l	0x50000500
-	dc.l	0x50000050
-	dc.l	0x50000050
-	dc.l	0x50000050
-	dc.l	0x50050050
-	dc.l	0x05550000
+	dc.l	0x90000900		/* Character F - い */
+	dc.l	0x90000900
+	dc.l	0x90000090
+	dc.l	0x90000090
+	dc.l	0x90000090
+	dc.l	0x90090090
+	dc.l	0x09990000
 	dc.l	0x00000000
