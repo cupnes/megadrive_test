@@ -137,6 +137,19 @@ _Loop:
 	move.l	(%a0)+, 0x00C00000
 	dbra	%d0, _Loop
 
+	/* Init Tiles */
+	move.l	#0x40000000, 0x00C00004
+	lea	Characters, %a0
+	move.w	#(8*8)-1, %d0
+_ChLoop:
+	move.l	(%a0)+, 0x00C00000
+	dbra	%d0, _ChLoop
+
+	/* Print hello */
+	/* 0xC000+(((0x04*0x40)+0x08)*2) = 0xC210 */
+	move.l	#(0x40000000)|((0xC210)&0x3FFF)<<16|(0xC210)>>14, 0x00C00004
+	move.w	#0x1, 0x00C00000
+
 	jmp.s	.
 
 InitialVDPRegisterSettings:
@@ -184,7 +197,16 @@ Palette:
 	dc.w	0x0060			/* Colour F - Dark green */
 
 Characters:
-	dc.l	0x11000110			/* Character 0 - H */
+	dc.l	0x00000000		/* Character 0 - SPC */
+	dc.l	0x00000000
+	dc.l	0x00000000
+	dc.l	0x00000000
+	dc.l	0x00000000
+	dc.l	0x00000000
+	dc.l	0x00000000
+	dc.l	0x00000000
+
+	dc.l	0x11000110		/* Character 1 - H */
 	dc.l	0x11000110
 	dc.l	0x11000110
 	dc.l	0x11111110
@@ -193,7 +215,7 @@ Characters:
 	dc.l	0x11000110
 	dc.l	0x00000000
 
-	dc.l	0x11111110			/* Character 1 - E */
+	dc.l	0x11111110		/* Character 2 - E */
 	dc.l	0x11000000
 	dc.l	0x11000000
 	dc.l	0x11111110
@@ -202,7 +224,7 @@ Characters:
 	dc.l	0x11111110
 	dc.l	0x00000000
 
-	dc.l	0x11000000			/* Character 2 - L */
+	dc.l	0x11000000		/* Character 3 - L */
 	dc.l	0x11000000
 	dc.l	0x11000000
 	dc.l	0x11000000
@@ -211,7 +233,7 @@ Characters:
 	dc.l	0x11111110
 	dc.l	0x00000000
 
-	dc.l	0x01111100			/* Character 3 - O */
+	dc.l	0x01111100		/* Character 4 - O */
 	dc.l	0x11101110
 	dc.l	0x11000110
 	dc.l	0x11000110
@@ -220,7 +242,7 @@ Characters:
 	dc.l	0x01111100
 	dc.l	0x00000000
 
-	dc.l	0x11000110			/* Character 4 - W */
+	dc.l	0x11000110		/* Character 5 - W */
 	dc.l	0x11000110
 	dc.l	0x11000110
 	dc.l	0x11000110
@@ -229,7 +251,7 @@ Characters:
 	dc.l	0x11000110
 	dc.l	0x00000000
 
-	dc.l	0x11111100			/* Character 5 - R */
+	dc.l	0x11111100		/* Character 6 - R */
 	dc.l	0x11000110
 	dc.l	0x11001100
 	dc.l	0x11111100
@@ -238,7 +260,7 @@ Characters:
 	dc.l	0x11000110
 	dc.l	0x00000000
 
-	dc.l	0x11111000			/* Character 6 - D */
+	dc.l	0x11111000		/* Character 7 - D */
 	dc.l	0x11001110
 	dc.l	0x11000110
 	dc.l	0x11000110
