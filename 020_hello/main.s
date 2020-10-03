@@ -170,7 +170,7 @@ InitialVDPRegisterSettings:
 	dc.b	0x07			/* 04: Pattern table for Scroll Plane B at 0xA000 (bits 0-2) */
 	dc.b	0x78			/* 05: Sprite table at 0xE000 (bits 0-6) */
 	dc.b	0x00			/* 06: Unused */
-	dc.b	0x0D			/* 07: Background color - bits 0-3 = color, bits 4-5 = palette */
+	dc.b	0x05			/* 07: Background color - bits 0-3 = color, bits 4-5 = palette */
 	dc.b	0x00			/* 08: Unused */
 	dc.b	0x00			/* 09: Unused */
 	dc.b	0x08			/* 10: Frequency of Horiz. interrupt in Rasters (number of lines travelled by the beam) */
@@ -252,13 +252,13 @@ Characters:
 	dc.l	0x04444400
 	dc.l	0x00000000
 
-	dc.l	0x55000550		/* Character 5 - W */
-	dc.l	0x55000550
-	dc.l	0x55000550
-	dc.l	0x55000550
-	dc.l	0x55050550
-	dc.l	0x55505550
-	dc.l	0x55000550
+	dc.l	0x88000880		/* Character 5 - W */
+	dc.l	0x88000880
+	dc.l	0x88000880
+	dc.l	0x88000880
+	dc.l	0x88080880
+	dc.l	0x88808880
+	dc.l	0x88000880
 	dc.l	0x00000000
 
 	dc.l	0x66666600		/* Character 6 - R */
