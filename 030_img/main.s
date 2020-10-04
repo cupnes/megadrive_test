@@ -148,11 +148,15 @@ _ChLoop:
 	/* Draw Image */
 	.include "draw.s"
 
+	/* Enable Display */
+	move.w	#0x8144, 0x00C00004
+	move.w	#0x8004, 0x00C00004
+
 	jmp.s	.
 
 InitialVDPRegisterSettings:
-	dc.b	0x14			/* 00: Mode Register 1 */
-	dc.b	0x74			/* 01: Vert. interrupt on, display on, DMA on, V28 mode (28 cells vertically), + bit 2 */
+	dc.b	0x07			/* 00: Mode Register 1 */
+	dc.b	0x04			/* 01: Vert. interrupt on, display on, DMA on, V28 mode (28 cells vertically), + bit 2 */
 	dc.b	0x10			/* 02: Pattern table for Scroll Plane A at 0x4000 (bits 3-5) */
 	dc.b	0x14			/* 03: Pattern table for Window Plane at 0x5000 (bits 1-5) */
 	dc.b	0x01			/* 04: Pattern table for Scroll Plane B at 0x2000 (bits 0-2) */
