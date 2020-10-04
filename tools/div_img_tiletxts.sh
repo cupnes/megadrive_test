@@ -34,6 +34,9 @@ to_3bit_col() {
 		echo '110'
 	elif [ $col8 -ge 224 -a $col8 -le 255 ]; then
 		echo '111'
+	else
+		echo "Error: $col8 is out of color range." 1>&2
+		exit 1
 	fi
 }
 
@@ -59,6 +62,11 @@ four_digits() {
 	esac
 }
 
+to16() {
+	local val=$1
+	echo "obase=16;$val" | bc
+}
+
 if [ $# -eq 1 ]; then
 	if [ "$1" = '-h' ]; then
 		usage
@@ -80,7 +88,9 @@ mkdir -p $OUTPUT_DIR
 
 # パレット生成
 rgb_list=$(cat $OUTPUT_DIR/${name}_*.txt | grep -v '^#' | cut -d'(' -f3 | tr -d ')' | cut -d',' -f-3 | sort -u)
-palette_all=''
+palette_tbl=''
+n=0	# n=0:BG, n=[1:15]:PB, n=[16:30]:PA, n=[31:45]:WI
+plane=''
 for rgb in $rgb_list; do
 	r=$(echo "$rgb" | cut -d',' -f1)
 	g=$(echo "$rgb" | cut -d',' -f2)
@@ -89,11 +99,64 @@ for rgb in $rgb_list; do
 	g3=$(to_3bit_col $g)
 	b3=$(to_3bit_col $b)
 	hex=$(echo "obase=16;ibase=2;0000${b3}0${g3}0${r3}0" | bc)
-	palette_all="$palette_all $rgb#0x$(four_digits $hex)"
+	if [ $n -eq 0 ]; then
+		plane='BG'
+	elif [ $n -ge 1 -a $n -le 15 ]; then
+		plane='PB'
+	elif [ $n -ge 16 -a $n -le 30 ]; then
+		plane='PA'
+	elif [ $n -ge 31 -a $n -le 45 ]; then
+		plane='WI'
+	else
+		echo "Error: $n is out of plane range." 1>&2
+		break
+	fi
+	palette_tbl="$palette_tbl $plane#$rgb#0x$(four_digits $hex)"
+	n=$((n + 1))
 done
-
-num_cols=$(printf "%s\n" $palette_all | wc -l)
-if [ $num_cols -gt $MAX_COLORS ]; then
-	echo "Error: number of colors($num_cols) in $SRC_IMG_FILE exceeds MAX_COLORS($MAX_COLORS)." 1>&2
+if [ $n -gt $MAX_COLORS ]; then
+	echo "Error: number of colors($n) in $SRC_IMG_FILE exceeds MAX_COLORS($MAX_COLORS)." 1>&2
 	exit 1
 fi
+printf "%s\n" $palette_tbl >$OUTPUT_DIR/${name}.tbl
+entry=$(printf "%s\n" $palette_tbl | grep '^BG')
+rgb=$(echo $entry | cut -d'#' -f2)
+hex=$(echo $entry | cut -d'#' -f3)
+cat <<EOF >$OUTPUT_DIR/${name}.s
+PaletteBG:
+	dc.w	0x0000			/* 0: Transparent */
+	dc.w	$hex			/* 1: $rgb */
+	dc.w	0x0000			/* 2: None */
+	dc.w	0x0000			/* 3: None */
+	dc.w	0x0000			/* 4: None */
+	dc.w	0x0000			/* 5: None */
+	dc.w	0x0000			/* 6: None */
+	dc.w	0x0000			/* 7: None */
+	dc.w	0x0000			/* 8: None */
+	dc.w	0x0000			/* 9: None */
+	dc.w	0x0000			/* A: None */
+	dc.w	0x0000			/* B: None */
+	dc.w	0x0000			/* C: None */
+	dc.w	0x0000			/* D: None */
+	dc.w	0x0000			/* E: None */
+	dc.w	0x0000			/* F: None */
+
+EOF
+for plane in 'PB' 'PA' 'WI'; do
+	cat <<EOF >>$OUTPUT_DIR/${name}.s
+Palette${plane}:
+	dc.w	0x0000			/* 0: Transparent */
+EOF
+	entry_list=$(printf "%s\n" $palette_tbl | grep "^$plane")
+	n=1
+	for entry in $entry_list; do
+		rgb=$(echo $entry | cut -d'#' -f2)
+		hex=$(echo $entry | cut -d'#' -f3)
+		echo -e "\tdc.w\t$hex\t\t\t/* $(to16 ${n}): $rgb */"
+		n=$((n + 1))
+	done >>$OUTPUT_DIR/${name}.s
+	for t in $(seq $n 15); do
+		echo -e "\tdc.w\t0x0000\t\t\t/* $(to16 ${t}): None */"
+	done >>$OUTPUT_DIR/${name}.s
+	echo >>$OUTPUT_DIR/${name}.s
+done
