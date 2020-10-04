@@ -122,7 +122,7 @@ printf "%s\n" $palette_tbl >$OUTPUT_DIR/${name}.tbl
 entry=$(printf "%s\n" $palette_tbl | grep '^BG')
 rgb=$(echo $entry | cut -d'#' -f2)
 hex=$(echo $entry | cut -d'#' -f3)
-cat <<EOF >$OUTPUT_DIR/${name}.s
+cat <<EOF >$OUTPUT_DIR/${name}_palettes.s
 PaletteBG:
 	dc.w	0x0000			/* 0: Transparent */
 	dc.w	$hex			/* 1: $rgb */
@@ -143,7 +143,7 @@ PaletteBG:
 
 EOF
 for plane in 'PB' 'PA' 'WI'; do
-	cat <<EOF >>$OUTPUT_DIR/${name}.s
+	cat <<EOF >>$OUTPUT_DIR/${name}_palettes.s
 Palette${plane}:
 	dc.w	0x0000			/* 0: Transparent */
 EOF
@@ -154,9 +154,36 @@ EOF
 		hex=$(echo $entry | cut -d'#' -f3)
 		echo -e "\tdc.w\t$hex\t\t\t/* $(to16 ${n}): $rgb */"
 		n=$((n + 1))
-	done >>$OUTPUT_DIR/${name}.s
+	done >>$OUTPUT_DIR/${name}_palettes.s
 	for t in $(seq $n 15); do
 		echo -e "\tdc.w\t0x0000\t\t\t/* $(to16 ${t}): None */"
-	done >>$OUTPUT_DIR/${name}.s
-	echo >>$OUTPUT_DIR/${name}.s
+	done >>$OUTPUT_DIR/${name}_palettes.s
+	if [ "$plane" != "WI" ]; then
+		echo >>$OUTPUT_DIR/${name}_palettes.s
+	fi
+done
+
+# タイル生成
+for plane in 'PB' 'PA' 'WI'; do
+	(
+		echo "Tiles${plane}:" >>$OUTPUT_DIR/${name}_tiles_${plane}.s
+		for cropped_file in $(ls $OUTPUT_DIR/${name}_*.txt); do
+			n=$(echo $cropped_file | rev | cut -d'.' -f2 | cut -d'_' -f1 | rev)
+			echo -e "\t/* tile: $n */" >>$OUTPUT_DIR/${name}_tiles_${plane}.s
+			rgb_list=$(tail -n +2 $cropped_file | cut -d'(' -f3 | tr -d ')' | cut -d',' -f-3)
+			n=0
+			for rgb in $rgb_list; do
+				if [ $((n % 8)) -eq 0 ]; then
+					echo -en "\tdc.l\t0x"
+				fi
+				palette=$(printf "%s\n" $palette_tbl | grep "^$plane")
+				colnum=$(printf "%s\n" $palette | awk "BEGIN{c=0}\$0~/#$rgb#/{c=NR}END{print c}")
+				echo -en "$(to16 $colnum)"
+				if [ $(((n + 1) % 8)) -eq 0 ]; then
+					echo
+				fi
+				n=$((n + 1))
+			done >>$OUTPUT_DIR/${name}_tiles_${plane}.s
+		done
+	) &
 done
