@@ -200,7 +200,7 @@ for plane in 'PB' 'PA' 'WI'; do
 		fi
 		if [ $((tile_th % NUM_TILES_PER_LINE)) -eq 0 ]; then
 			echo -e "\tmove.l\t#(0x40000000)|((0x$plane_addr)&0x3FFF)<<16|(0x$plane_addr)>>14, 0x00C00004"
-			plane_addr=$(echo "obase=16;ibase=16;$plane_addr + 50" | bc)
+			plane_addr=$(echo "obase=16;ibase=16;$plane_addr + 80" | bc)
 		fi >>$OUTPUT_DIR/${name}_draw.s
 		rgb_list=$(tail -n +2 $cropped_file | cut -d'(' -f3 | tr -d ')' | cut -d',' -f-3)
 		n=0
