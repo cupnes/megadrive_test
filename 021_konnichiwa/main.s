@@ -132,9 +132,9 @@ ClearCRAM:
 	/* Init Palette */
 	move.l	#0xC0000000, 0xC00004
 	lea	Palette, %a0
-	move.l	#0x07, %d0
+	move.l	#16-1, %d0
 _Loop:
-	move.l	(%a0)+, 0x00C00000
+	move.w	(%a0)+, 0x00C00000
 	dbra	%d0, _Loop
 
 	/* Init Tiles */
