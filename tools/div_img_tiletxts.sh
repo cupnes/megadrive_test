@@ -9,6 +9,7 @@ set -ue
 # - ウィンドウ(15色)
 # - 計: (+ 1 15 15 15)46色
 MAX_COLORS=46
+NUM_TILES_PER_LINE=40
 
 usage() {
 	echo 'Usage:' 1>&2
@@ -40,6 +41,25 @@ to_3bit_col() {
 	fi
 }
 
+three_digits() {
+	local val=$1
+	local current_digits=$(echo -n $val | wc -m)
+	case $current_digits in
+	1)
+		echo "00$val"
+		;;
+	2)
+		echo "0$val"
+		;;
+	3)
+		echo $val
+		;;
+	*)
+		echo "Error(three_digits): Invalid digits: %val" 1>&2
+		return 1
+	esac
+}
+
 four_digits() {
 	local val=$1
 	local current_digits=$(echo -n $val | wc -m)
@@ -57,7 +77,7 @@ four_digits() {
 		echo $val
 		;;
 	*)
-		echo "Error: Invalid digits: %val" 1>&2
+		echo "Error(four_digits): Invalid digits: %val" 1>&2
 		return 1
 	esac
 }
@@ -163,27 +183,55 @@ EOF
 	fi
 done
 
-# タイル生成
+# タイルと描画処理生成
+tile_list=''
+rm -f $OUTPUT_DIR/${name}_draw.s
+plane_addr_list="PB#2000 PA#4000 WI#5000"
+palette_hex_list="PB#1 PA#2 WI#3"
 for plane in 'PB' 'PA' 'WI'; do
-	(
-		echo "Tiles${plane}:" >>$OUTPUT_DIR/${name}_tiles_${plane}.s
-		for cropped_file in $(ls $OUTPUT_DIR/${name}_*.txt); do
-			n=$(echo $cropped_file | rev | cut -d'.' -f2 | cut -d'_' -f1 | rev)
-			echo -e "\t/* tile: $n */" >>$OUTPUT_DIR/${name}_tiles_${plane}.s
-			rgb_list=$(tail -n +2 $cropped_file | cut -d'(' -f3 | tr -d ')' | cut -d',' -f-3)
-			n=0
-			for rgb in $rgb_list; do
-				if [ $((n % 8)) -eq 0 ]; then
-					echo -en "\tdc.l\t0x"
-				fi
-				palette=$(printf "%s\n" $palette_tbl | grep "^$plane")
-				colnum=$(printf "%s\n" $palette | awk "BEGIN{c=0}\$0~/#$rgb#/{c=NR}END{print c}")
-				echo -en "$(to16 $colnum)"
-				if [ $(((n + 1) % 8)) -eq 0 ]; then
-					echo
-				fi
-				n=$((n + 1))
-			done >>$OUTPUT_DIR/${name}_tiles_${plane}.s
+	plane_addr=$(printf "%s\n" $plane_addr_list | grep "^$plane" | cut -d'#' -f2)
+	echo "Draw${plane}:" >>$OUTPUT_DIR/${name}_draw.s
+	for cropped_file in $(ls $OUTPUT_DIR/${name}_*.txt); do
+		tile_th_str=$(echo $cropped_file | rev | cut -d'.' -f2 | cut -d'_' -f1 | rev)
+		if [ "$tile_th_str" = "0000" ]; then
+			tile_th=0
+		else
+			tile_th=$(echo $tile_th_str | sed -r 's/0*([1-9]+)/\1/')
+		fi
+		if [ $((tile_th % NUM_TILES_PER_LINE)) -eq 0 ]; then
+			echo -e "\tmove.l\t#(0x40000000)|((0x$plane_addr)&0x3FFF)<<16|(0x$plane_addr)>>14, 0x00C00004"
+			plane_addr=$(echo "obase=16;ibase=16;$plane_addr + 50" | bc)
+		fi >>$OUTPUT_DIR/${name}_draw.s
+		rgb_list=$(tail -n +2 $cropped_file | cut -d'(' -f3 | tr -d ')' | cut -d',' -f-3)
+		n=0
+		tile=''
+		for rgb in $rgb_list; do
+			if [ $((n % 8)) -eq 0 ]; then
+				hex='0x'
+			fi
+			palette=$(printf "%s\n" $palette_tbl | grep "^$plane")
+			colnum=$(printf "%s\n" $palette | awk "BEGIN{c=0}\$0~/#$rgb#/{c=NR}END{print c}")
+			hex="${hex}$(to16 $colnum)"
+			if [ $n -eq 7 ]; then
+				tile="${hex}"
+			elif [ $(((n + 1) % 8)) -eq 0 ]; then
+				tile="${tile},${hex}"
+			fi
+			n=$((n + 1))
 		done
-	) &
+		if ! printf "%s\n" $tile_list | grep -q $tile; then
+			tile_list="${tile_list} ${tile}"
+		fi
+		tile_idx=$(($(printf "%s\n" $tile_list | grep -n $tile | cut -d':' -f1) - 1))
+		tile_idx_hex=$(three_digits $(to16 $tile_idx))
+		palette_hex=$(printf "%s\n" $palette_hex_list | grep "^$plane" | cut -d'#' -f2)
+		echo -e "\tmove.w\t#0x${palette_hex}${tile_idx_hex}, 0x00C00000\t/* $tile_th_str */" >>$OUTPUT_DIR/${name}_draw.s
+	done
+	if [ "$plane" != "WI" ]; then
+		echo >>$OUTPUT_DIR/${name}_draw.s
+	fi
 done
+echo "Tiles:" >$OUTPUT_DIR/${name}_tiles.s
+for tile in $tile_list; do
+	echo -e "\tdc.l\t$tile"
+done >>$OUTPUT_DIR/${name}_tiles.s
