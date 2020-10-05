@@ -185,7 +185,7 @@ done
 # タイルと描画処理生成
 tile_list=''
 rm -f $OUTPUT_DIR/${name}_draw.s
-plane_addr_list="PB#2000 PA#4000"
+plane_addr_list="PB#C000 PA#E000"
 palette_hex_list="PB#2 PA#4"
 for plane in 'PB' 'PA'; do
 	plane_addr=$(printf "%s\n" $plane_addr_list | grep "^$plane" | cut -d'#' -f2)
