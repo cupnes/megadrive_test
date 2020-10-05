@@ -6,9 +6,8 @@ set -ue
 # - 背景色(1色)
 # - 背景(Plane B)(15色)
 # - 前景(Plane A)(15色)
-# - ウィンドウ(15色)
-# - 計: (+ 1 15 15 15)46色
-MAX_COLORS=46
+# - 計: (+ 1 15 15)31色
+MAX_COLORS=31
 NUM_TILES_PER_LINE=40
 
 usage() {
@@ -104,12 +103,14 @@ OUTPUT_DIR=$2
 name=$(basename $SRC_IMG_FILE | rev | cut -d'.' -f2- | rev)
 mkdir -p $OUTPUT_DIR
 
-# convert $SRC_IMG_FILE -colorspace RGB -depth 2 -crop 8x8 $OUTPUT_DIR/${name}_%04d.txt
+src_suff=$(echo $SRC_IMG_FILE | rev | cut -d'.' -f1 | rev)
+convert $SRC_IMG_FILE +dither -colors $MAX_COLORS $OUTPUT_DIR/${name}_col${MAX_COLORS}.${src_suff}
+convert $OUTPUT_DIR/${name}_col${MAX_COLORS}.${src_suff} -crop 8x8 $OUTPUT_DIR/${name}_%04d.txt
 
 # パレット生成
 rgb_list=$(cat $OUTPUT_DIR/${name}_*.txt | grep -v '^#' | cut -d'(' -f3 | tr -d ')' | cut -d',' -f-3 | sort -u)
 palette_tbl=''
-n=0	# n=0:BG, n=[1:15]:PB, n=[16:30]:PA, n=[31:45]:WI
+n=0	# n=0:BG, n=[1:15]:PB, n=[16:30]:PA
 plane=''
 for rgb in $rgb_list; do
 	r=$(echo "$rgb" | cut -d',' -f1)
@@ -125,8 +126,6 @@ for rgb in $rgb_list; do
 		plane='PB'
 	elif [ $n -ge 16 -a $n -le 30 ]; then
 		plane='PA'
-	elif [ $n -ge 31 -a $n -le 45 ]; then
-		plane='WI'
 	else
 		echo "Error: $n is out of plane range." 1>&2
 		break
@@ -162,7 +161,7 @@ PaletteBG:
 	dc.w	0x0000			/* F: None */
 
 EOF
-for plane in 'PB' 'PA' 'WI'; do
+for plane in 'PB' 'PA'; do
 	cat <<EOF >>$OUTPUT_DIR/${name}_palettes.s
 Palette${plane}:
 	dc.w	0x0000			/* 0: Transparent */
@@ -178,7 +177,7 @@ EOF
 	for t in $(seq $n 15); do
 		echo -e "\tdc.w\t0x0000\t\t\t/* $(to16 ${t}): None */"
 	done >>$OUTPUT_DIR/${name}_palettes.s
-	if [ "$plane" != "WI" ]; then
+	if [ "$plane" != "PA" ]; then
 		echo >>$OUTPUT_DIR/${name}_palettes.s
 	fi
 done
@@ -186,9 +185,9 @@ done
 # タイルと描画処理生成
 tile_list=''
 rm -f $OUTPUT_DIR/${name}_draw.s
-plane_addr_list="PB#2000 PA#4000 WI#5000"
-palette_hex_list="PB#2 PA#4 WI#6"
-for plane in 'PB' 'PA' 'WI'; do
+plane_addr_list="PB#2000 PA#4000"
+palette_hex_list="PB#2 PA#4"
+for plane in 'PB' 'PA'; do
 	plane_addr=$(printf "%s\n" $plane_addr_list | grep "^$plane" | cut -d'#' -f2)
 	echo "Draw${plane}:" >>$OUTPUT_DIR/${name}_draw.s
 	for cropped_file in $(ls $OUTPUT_DIR/${name}_*.txt); do
@@ -227,7 +226,7 @@ for plane in 'PB' 'PA' 'WI'; do
 		palette_hex=$(printf "%s\n" $palette_hex_list | grep "^$plane" | cut -d'#' -f2)
 		echo -e "\tmove.w\t#0x${palette_hex}${tile_idx_hex}, 0x00C00000\t/* $tile_th_str */" >>$OUTPUT_DIR/${name}_draw.s
 	done
-	if [ "$plane" != "WI" ]; then
+	if [ "$plane" != "PA" ]; then
 		echo >>$OUTPUT_DIR/${name}_draw.s
 	fi
 done
