@@ -187,7 +187,7 @@ done
 tile_list=''
 rm -f $OUTPUT_DIR/${name}_draw.s
 plane_addr_list="PB#2000 PA#4000 WI#5000"
-palette_hex_list="PB#1 PA#2 WI#3"
+palette_hex_list="PB#2 PA#4 WI#6"
 for plane in 'PB' 'PA' 'WI'; do
 	plane_addr=$(printf "%s\n" $plane_addr_list | grep "^$plane" | cut -d'#' -f2)
 	echo "Draw${plane}:" >>$OUTPUT_DIR/${name}_draw.s
