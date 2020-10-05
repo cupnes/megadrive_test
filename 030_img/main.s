@@ -148,7 +148,7 @@ _Loop:
 	/* Init Tiles */
 	move.l	#0x40000000, 0x00C00004
 	lea	Tiles, %a0
-	move.w	#(16*1501)-1, %d0
+	move.w	#(16*1501)-1, %d0	/* If the number of tiles changes, change the "1501" part. */
 _ChLoop:
 	move.w	(%a0)+, 0x00C00000
 	dbra	%d0, _ChLoop
