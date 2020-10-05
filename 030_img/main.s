@@ -125,6 +125,14 @@ ClearCRAM:
 	move.w	%d0, 0xC00000		/* write 0 to the data port */
 	dbf	%d7, ClearCRAM		/* clear the cram */
 
+	/* Clear VRAM */
+	move.w	#0x0000, %d0
+	move.l	#0x40000000, 0x00C00004
+	move.w	#(0x10000/2)-1, %d7
+ClearVRAM:
+	move.w	%d0, 0x00C00000
+	dbf	%d7, ClearVRAM
+
 	/*move.w	#0x2300, %sr*/		/* Enable interrupts */
 
 	/* Main */
