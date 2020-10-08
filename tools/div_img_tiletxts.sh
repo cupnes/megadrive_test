@@ -108,17 +108,20 @@ convert $SRC_IMG_FILE +dither -colors $MAX_COLORS $OUTPUT_DIR/${name}_col${MAX_C
 convert $OUTPUT_DIR/${name}_col${MAX_COLORS}.${src_suff} -crop 8x8 $OUTPUT_DIR/${name}_%04d.txt
 
 # パレット生成
-rgb_list=$(cat $OUTPUT_DIR/${name}_*.txt | grep -v '^#' | cut -d'(' -f3 | tr -d ')' | cut -d',' -f-3 | sort -u)
+rgb_list=$(cat $OUTPUT_DIR/${name}_*.txt | grep -v '^#' | awk '{print $3}' | tr -d '#' | sort -u)
 palette_tbl=''
 n=0	# n=0:BG, n=[1:15]:PB, n=[16:30]:PA
 plane=''
 for rgb in $rgb_list; do
-	r=$(echo "$rgb" | cut -d',' -f1)
-	g=$(echo "$rgb" | cut -d',' -f2)
-	b=$(echo "$rgb" | cut -d',' -f3)
-	r3=$(to_3bit_col $r)
-	g3=$(to_3bit_col $g)
-	b3=$(to_3bit_col $b)
+	rh=$(echo "$rgb" | cut -c1-2)
+	gh=$(echo "$rgb" | cut -c3-4)
+	bh=$(echo "$rgb" | cut -c5-6)
+	rd=$(echo "ibase=16;$rh" | bc)
+	gd=$(echo "ibase=16;$gh" | bc)
+	bd=$(echo "ibase=16;$bh" | bc)
+	r3=$(to_3bit_col $rd)
+	g3=$(to_3bit_col $gd)
+	b3=$(to_3bit_col $bd)
 	hex=$(echo "obase=16;ibase=2;0000${b3}0${g3}0${r3}0" | bc)
 	if [ $n -eq 0 ]; then
 		plane='BG'
@@ -185,7 +188,7 @@ done
 # タイルと描画処理生成
 tile_list=''
 rm -f $OUTPUT_DIR/${name}_draw.s
-plane_addr_list="PB#E000 PA#F000"
+plane_addr_list="PB#C000 PA#E000"
 palette_hex_list="PB#2 PA#4"
 for plane in 'PB' 'PA'; do
 	plane_addr=$(printf "%s\n" $plane_addr_list | grep "^$plane" | cut -d'#' -f2)
@@ -201,7 +204,7 @@ for plane in 'PB' 'PA'; do
 			echo -e "\tmove.l\t#(0x40000000)|((0x$plane_addr)&0x3FFF)<<16|(0x$plane_addr)>>14, 0x00C00004"
 			plane_addr=$(echo "obase=16;ibase=16;$plane_addr + 80" | bc)
 		fi >>$OUTPUT_DIR/${name}_draw.s
-		rgb_list=$(tail -n +2 $cropped_file | cut -d'(' -f3 | tr -d ')' | cut -d',' -f-3)
+		rgb_list=$(tail -n +2 $cropped_file | awk '{print $3}' | tr -d '#')
 		n=0
 		tile=''
 		for rgb in $rgb_list; do

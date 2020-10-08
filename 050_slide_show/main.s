@@ -145,7 +145,7 @@ _Loop:
 	move.l	#0x40000000, 0x00C00004
 	lea	Tiles, %a0
 	/*move.w	#(16*1501)-1, %d0*/	/* If the number of tiles changes, change the "1501" part. */
-	move.w	#(16*1592)-1, %d0
+	move.w	#(16*1443)-1, %d0
 _ChLoop:
 	move.w	(%a0)+, 0x00C00000
 	dbra	%d0, _ChLoop
@@ -170,10 +170,10 @@ WaitRBtn:
 InitialVDPRegisterSettings:
 	dc.b	0x04			/* 00: Mode Register 1 */
 	dc.b	0x44			/* 01: Vert. interrupt on, display on, DMA on, V28 mode (28 cells vertically), + bit 2 */
-	dc.b	0x30			/* 02: Pattern table for Scroll Plane A at 0xC000 (bits 3-5) */
+	dc.b	0x38			/* 02: Pattern table for Scroll Plane A at 0xE000 (bits 3-5) */
 	dc.b	0x3C			/* 03: Pattern table for Window Plane at 0xF000 (bits 1-5) */
-	dc.b	0x07			/* 04: Pattern table for Scroll Plane B at 0xE000 (bits 0-2) */
-	dc.b	0x60			/* 05: Sprite table at 0xC000 (bits 0-6) */
+	dc.b	0x06			/* 04: Pattern table for Scroll Plane B at 0xC000 (bits 0-2) */
+	dc.b	0x78			/* 05: Sprite table at 0xF000 (bits 0-6) */
 	dc.b	0x00			/* 06: Unused */
 	dc.b	0x01			/* 07: Background color - bits 0-3 = color, bits 4-5 = palette */
 	dc.b	0x00			/* 08: Unused */
@@ -181,7 +181,7 @@ InitialVDPRegisterSettings:
 	dc.b	0x08			/* 10: Frequency of Horiz. interrupt in Rasters (number of lines travelled by the beam) */
 	dc.b	0x00			/* 11: External interrupts on, V/H scrolling on */
 	dc.b	0x81			/* 12: Shadows and highlights off, interlace off, H40 mode (40 cells horizontally) */
-	dc.b	0x30			/* 13: Horiz. scroll table at 0xC000 (bits 0-5) */
+	dc.b	0x3C			/* 13: Horiz. scroll table at 0xF000 (bits 0-5) */
 	dc.b	0x00			/* 14: Unused */
 	dc.b	0x02			/* 15: Autoincrement off */
 	dc.b	0x01			/* 16: Vert. scroll 32, Horiz. scroll 64 */
