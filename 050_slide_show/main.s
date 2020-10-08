@@ -144,15 +144,15 @@ _Loop:
 	/* Init Tiles */
 	move.l	#0x40000000, 0x00C00004
 	lea	Tiles, %a0
-	/*move.w	#(16*1501)-1, %d0*/	/* If the number of tiles changes, change the "1501" part. */
-	move.w	#(16*1443)-1, %d0
+	move.w	#(16*1250)-1, %d0	/* If the number of tiles changes, change the "1501" part. */
+	/*move.w	#(16*1443)-1, %d0*/
 _ChLoop:
 	move.w	(%a0)+, 0x00C00000
 	dbra	%d0, _ChLoop
 
 	/* Draw Image */
-	/*.include "draw.s"*/
-	.include "self-intro_draw.s"
+	.include "a_long_vacation_draw.s"
+	/*.include "self-intro_draw.s"*/
 
 	/* Wait for the right button is pressed */
 WaitRBtn:
@@ -193,7 +193,7 @@ InitialVDPRegisterSettings:
 	dc.b	0x00			/* 22: DMA source address mid byte */
 	dc.b	0x80			/* 23: DMA source address hi byte, memory-to-VRAM mode (bits 6-7) */
 
-	/*.include "palettes.s"
-	.include "tiles.s"*/
-	.include "self-intro_palettes.s"
-	.include "self-intro_tiles.s"
+	.include "a_long_vacation_palettes.s"
+	.include "a_long_vacation_tiles.s"
+	/*.include "self-intro_palettes.s"
+	.include "self-intro_tiles.s"*/
