@@ -135,24 +135,22 @@ ClearVRAM:
 
 	/* Init Palettes */
 	move.l	#0xC0000000, 0xC00004
-	lea	PaletteBG, %a0
+	lea	SIPaletteBG, %a0
 	move.l	#(16*3)-1, %d0
-_Loop:
+SIPaletteLoop:
 	move.w	(%a0)+, 0x00C00000
-	dbra	%d0, _Loop
+	dbra	%d0, SIPaletteLoop
 
 	/* Init Tiles */
 	move.l	#0x40000000, 0x00C00004
-	lea	Tiles, %a0
-	move.w	#(16*1250)-1, %d0	/* If the number of tiles changes, change the "1501" part. */
-	/*move.w	#(16*1443)-1, %d0*/
-_ChLoop:
+	lea	SITiles, %a0
+	move.w	#(16*1443)-1, %d0
+SITilesLoop:
 	move.w	(%a0)+, 0x00C00000
-	dbra	%d0, _ChLoop
+	dbra	%d0, SITilesLoop
 
 	/* Draw Image */
-	.include "a_long_vacation_draw.s"
-	/*.include "self-intro_draw.s"*/
+	.include "self-intro_draw.s"
 
 	/* Wait for the right button is pressed */
 WaitRBtn:
@@ -164,6 +162,25 @@ WaitRBtn:
 	move.b	0x00A10003, %d0
 	andi.b	#0x08, %d0
 	bne	WaitRBtn
+
+	/* Init Palettes */
+	move.l	#0xC0000000, 0xC00004
+	lea	ALVPaletteBG, %a0
+	move.l	#(16*3)-1, %d0
+ALVPaletteLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, ALVPaletteLoop
+
+	/* Init Tiles */
+	move.l	#0x40000000, 0x00C00004
+	lea	ALVTiles, %a0
+	move.w	#(16*1250)-1, %d0
+ALVTilesLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, ALVTilesLoop
+
+	/* Draw Image */
+	.include "a_long_vacation_draw.s"
 
 	jmp.s	.
 
@@ -193,7 +210,7 @@ InitialVDPRegisterSettings:
 	dc.b	0x00			/* 22: DMA source address mid byte */
 	dc.b	0x80			/* 23: DMA source address hi byte, memory-to-VRAM mode (bits 6-7) */
 
+	.include "self-intro_palettes.s"
+	.include "self-intro_tiles.s"
 	.include "a_long_vacation_palettes.s"
 	.include "a_long_vacation_tiles.s"
-	/*.include "self-intro_palettes.s"
-	.include "self-intro_tiles.s"*/

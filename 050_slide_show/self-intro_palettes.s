@@ -1,4 +1,4 @@
-PaletteBG:
+SIPaletteBG:
 	dc.w	0x0000			/* 0: Transparent */
 	dc.w	0x0000			/* 1: 000100 */
 	dc.w	0x0000			/* 2: None */
@@ -16,7 +16,7 @@ PaletteBG:
 	dc.w	0x0000			/* E: None */
 	dc.w	0x0000			/* F: None */
 
-PalettePB:
+SIPalettePB:
 	dc.w	0x0000			/* 0: Transparent */
 	dc.w	0x0000			/* 1: 191D1D */
 	dc.w	0x0220			/* 2: 1B2521 */
@@ -34,7 +34,7 @@ PalettePB:
 	dc.w	0x0666			/* E: 6D6762 */
 	dc.w	0x0668			/* F: 8F7160 */
 
-PalettePA:
+SIPalettePA:
 	dc.w	0x0000			/* 0: Transparent */
 	dc.w	0x068A			/* 1: A38B6F */
 	dc.w	0x08AA			/* 2: A6A096 */
