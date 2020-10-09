@@ -154,7 +154,7 @@ K01TilesLoop:
 	/* Draw Image */
 	.include "koedo219_2_01_320x224_draw.s"
 
-	/* Wait for the right button is pressed */
+	/* Wait for right button is pressed */
 K01WaitRBtn:
 	move.b	#0x40, %d0
 	move.b	%d0, 0x00A10009
@@ -169,6 +169,7 @@ K01WaitRBtn:
 
 	/* [SLIDE 02] */
 	/* Init Palettes */
+SIStart:
 	move.l	#0xC0000000, 0xC00004
 	lea	SIPaletteBG, %a0
 	move.l	#(16*3)-1, %d0
@@ -187,7 +188,7 @@ SITilesLoop:
 	/* Draw Image */
 	.include "self-intro_draw.s"
 
-	/* Wait for the right button is pressed */
+	/* Wait for left or right button is pressed */
 SIWaitRBtn:
 	move.b	#0x40, %d0
 	move.b	%d0, 0x00A10009
@@ -224,6 +225,18 @@ ALVTilesLoop:
 
 	/* Draw Image */
 	.include "a_long_vacation_draw.s"
+
+	/* Wait for left button is pressed */
+ALVWaitRBtn:
+	move.b	#0x40, %d0
+	move.b	%d0, 0x00A10009
+	move.b	%d0, 0x00A10003
+	nop
+	nop
+	move.b	0x00A10003, %d0
+	andi.b	#0x04, %d0
+	bne	ALVWaitRBtn
+	jmp	SIStart
 
 	jmp.s	.
 
