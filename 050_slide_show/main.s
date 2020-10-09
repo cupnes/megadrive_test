@@ -133,7 +133,9 @@ ClearVRAM:
 
 	/* Main */
 
+	/* [SLIDE 01] */
 	/* Init Palettes */
+K01Start:
 	move.l	#0xC0000000, 0xC00004
 	lea	K01PaletteBG, %a0
 	move.l	#(16*3)-1, %d0
@@ -163,6 +165,9 @@ K01WaitRBtn:
 	andi.b	#0x08, %d0
 	bne	K01WaitRBtn
 
+
+
+	/* [SLIDE 02] */
 	/* Init Palettes */
 	move.l	#0xC0000000, 0xC00004
 	lea	SIPaletteBG, %a0
@@ -190,10 +195,18 @@ SIWaitRBtn:
 	nop
 	nop
 	move.b	0x00A10003, %d0
+	move.b	%d0, %d1
 	andi.b	#0x08, %d0
+	beq	ALVStart
+	andi.b	#0x04, %d1
 	bne	SIWaitRBtn
+	jmp	K01Start
 
+
+
+	/* [SLIDE 03] */
 	/* Init Palettes */
+ALVStart:
 	move.l	#0xC0000000, 0xC00004
 	lea	ALVPaletteBG, %a0
 	move.l	#(16*3)-1, %d0
