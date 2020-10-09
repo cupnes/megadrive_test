@@ -227,7 +227,7 @@ S3PaletteLoop:
 	/* Init Tiles */
 	move.l	#0x40000000, 0x00C00004
 	lea	S3Tiles, %a0
-	move.w	#(16*1746)-1, %d0
+	move.w	#(16*395)-1, %d0
 S3TilesLoop:
 	move.w	(%a0)+, 0x00C00000
 	dbra	%d0, S3TilesLoop

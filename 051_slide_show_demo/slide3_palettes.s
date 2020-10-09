@@ -1,6 +1,6 @@
 S3PaletteBG:
 	dc.w	0x0000			/* 0: Transparent */
-	dc.w	0x0220			/* 1: 162F2F */
+	dc.w	0x0000			/* 1: 000000 */
 	dc.w	0x0000			/* 2: None */
 	dc.w	0x0000			/* 3: None */
 	dc.w	0x0000			/* 4: None */
@@ -18,36 +18,36 @@ S3PaletteBG:
 
 S3PalettePB:
 	dc.w	0x0000			/* 0: Transparent */
-	dc.w	0x0240			/* 1: 1B453B */
-	dc.w	0x0440			/* 2: 1E5652 */
-	dc.w	0x0002			/* 3: 211D1B */
-	dc.w	0x0422			/* 4: 21364A */
-	dc.w	0x0862			/* 5: 2A6F8E */
-	dc.w	0x0222			/* 6: 303030 */
-	dc.w	0x0882			/* 7: 35879D */
-	dc.w	0x0424			/* 8: 463E42 */
-	dc.w	0x0864			/* 9: 4E798B */
-	dc.w	0x0444			/* A: 504B4A */
-	dc.w	0x0224			/* B: 52302E */
-	dc.w	0x0224			/* C: 5B2820 */
-	dc.w	0x0884			/* D: 5B8996 */
-	dc.w	0x0244			/* E: 5D4835 */
-	dc.w	0x0686			/* F: 628770 */
+	dc.w	0x0000			/* 1: 091707 */
+	dc.w	0x0020			/* 2: 122F0F */
+	dc.w	0x0082			/* 3: 249A14 */
+	dc.w	0x0242			/* 4: 2B5E25 */
+	dc.w	0x0082			/* 5: 2C871E */
+	dc.w	0x00A2			/* 6: 2DAA1B */
+	dc.w	0x0282			/* 7: 339524 */
+	dc.w	0x02A2			/* 8: 38AF27 */
+	dc.w	0x00C2			/* 9: 3DC41F */
+	dc.w	0x0284			/* A: 409D30 */
+	dc.w	0x02A4			/* B: 46B536 */
+	dc.w	0x02C4			/* C: 4EC539 */
+	dc.w	0x04A4			/* D: 55B947 */
+	dc.w	0x04C4			/* E: 5AC846 */
+	dc.w	0x04C4			/* F: 5FCF47 */
 
 S3PalettePA:
 	dc.w	0x0000			/* 0: Transparent */
-	dc.w	0x0666			/* 1: 686561 */
-	dc.w	0x0468			/* 2: 926B5C */
-	dc.w	0x068A			/* 3: A08B70 */
-	dc.w	0x088A			/* 4: A49F96 */
-	dc.w	0x022A			/* 5: A93926 */
-	dc.w	0x024A			/* 6: AD4A2C */
-	dc.w	0x0CCA			/* 7: B0C0C5 */
-	dc.w	0x024C			/* 8: C34A30 */
-	dc.w	0x028C			/* 9: C3983C */
-	dc.w	0x0AAC			/* A: CDB3A1 */
-	dc.w	0x02AC			/* B: D1A236 */
-	dc.w	0x0ACC			/* C: D3C7BA */
-	dc.w	0x04AC			/* D: D4A65A */
-	dc.w	0x0CCC			/* E: DED9D1 */
-	dc.w	0x0ACE			/* F: E6C8B1 */
+	dc.w	0x04A6			/* 1: 60BF4E */
+	dc.w	0x04C6			/* 2: 65D04D */
+	dc.w	0x0AA6			/* 3: 68A9B4 */
+	dc.w	0x0EC8			/* 4: 87CEEB */
+	dc.w	0x0EC8			/* 5: 92D3EC */
+	dc.w	0x0ECA			/* 6: A8DFEC */
+	dc.w	0x0AAA			/* 7: A9ACAD */
+	dc.w	0x02AC			/* 8: C8BD21 */
+	dc.w	0x004C			/* 9: CE4D01 */
+	dc.w	0x0ACC			/* A: CEDEBC */
+	dc.w	0x0EEC			/* B: D4E9EE */
+	dc.w	0x0EEE			/* C: EBF6F8 */
+	dc.w	0x008E			/* D: F19806 */
+	dc.w	0x00AE			/* E: FFAA00 */
+	dc.w	0x0EEE			/* F: FFFFFF */
