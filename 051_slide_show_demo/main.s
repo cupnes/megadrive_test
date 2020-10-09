@@ -187,7 +187,7 @@ S2PaletteLoop:
 	/* Init Tiles */
 	move.l	#0x40000000, 0x00C00004
 	lea	S2Tiles, %a0
-	move.w	#(16*245)-1, %d0
+	move.w	#(16*1157)-1, %d0
 S2TilesLoop:
 	move.w	(%a0)+, 0x00C00000
 	dbra	%d0, S2TilesLoop
@@ -239,95 +239,15 @@ S3TilesLoop:
 S3Delay:
 	dbra.w	%d0, S3Delay
 
-	/* Wait for left or right button is pressed */
+	/* Wait for left button is pressed */
 S3WaitRBtn:
 	move.b	#0x40, 0x00A10003
 	nop
 	nop
 	move.b	0x00A10003, %d0
-	move.b	%d0, %d1
-	andi.b	#0x08, %d0
-	beq	S4Start	/* next slide */
-	andi.b	#0x04, %d1
+	andi.b	#0x04, %d0
 	bne	S3WaitRBtn
 	jmp	S2Start	/* prev slide */
-
-
-
-	/* [SLIDE 04] */
-	/* Init Palettes */
-S4Start:
-	move.l	#0xC0000000, 0xC00004
-	lea	S4PaletteBG, %a0
-	move.l	#(16*3)-1, %d0
-S4PaletteLoop:
-	move.w	(%a0)+, 0x00C00000
-	dbra	%d0, S4PaletteLoop
-
-	/* Init Tiles */
-	move.l	#0x40000000, 0x00C00004
-	lea	S4Tiles, %a0
-	move.w	#(16*259)-1, %d0
-S4TilesLoop:
-	move.w	(%a0)+, 0x00C00000
-	dbra	%d0, S4TilesLoop
-
-	/* Draw Image */
-	.include "slide4_draw.s"
-
-	move.w	#0xFFF0, %d0
-S4Delay:
-	dbra.w	%d0, S4Delay
-
-	/* Wait for left or right button is pressed */
-S4WaitRBtn:
-	move.b	#0x40, 0x00A10003
-	nop
-	nop
-	move.b	0x00A10003, %d0
-	move.b	%d0, %d1
-	andi.b	#0x08, %d0
-	beq	S5Start	/* next slide */
-	andi.b	#0x04, %d1
-	bne	S4WaitRBtn
-	jmp	S3Start	/* prev slide */
-
-
-
-	/* [SLIDE 05] */
-	/* Init Palettes */
-S5Start:
-	move.l	#0xC0000000, 0xC00004
-	lea	S5PaletteBG, %a0
-	move.l	#(16*3)-1, %d0
-S5PaletteLoop:
-	move.w	(%a0)+, 0x00C00000
-	dbra	%d0, S5PaletteLoop
-
-	/* Init Tiles */
-	move.l	#0x40000000, 0x00C00004
-	lea	S5Tiles, %a0
-	move.w	#(16*610)-1, %d0
-S5TilesLoop:
-	move.w	(%a0)+, 0x00C00000
-	dbra	%d0, S5TilesLoop
-
-	/* Draw Image */
-	.include "slide5_draw.s"
-
-	move.w	#0xFFF0, %d0
-S5Delay:
-	dbra.w	%d0, S5Delay
-
-	/* Wait for left button is pressed */
-S5WaitRBtn:
-	move.b	#0x40, 0x00A10003
-	nop
-	nop
-	move.b	0x00A10003, %d0
-	andi.b	#0x04, %d0
-	bne	S5WaitRBtn
-	jmp	S4Start	/* prev slide */
 
 	jmp.s	.
 
@@ -363,7 +283,3 @@ InitialVDPRegisterSettings:
 	.include "slide2_tiles.s"
 	.include "slide3_palettes.s"
 	.include "slide3_tiles.s"
-	.include "slide4_palettes.s"
-	.include "slide4_tiles.s"
-	.include "slide5_palettes.s"
-	.include "slide5_tiles.s"
