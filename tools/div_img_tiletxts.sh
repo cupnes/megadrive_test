@@ -12,7 +12,7 @@ NUM_TILES_PER_LINE=40
 
 usage() {
 	echo 'Usage:' 1>&2
-	echo -e "\t$0 SRC_IMG_FILE OUTPUT_DIR" 1>&2
+	echo -e "\t$0 SRC_IMG_FILE OUTPUT_DIR LABEL_PREF" 1>&2
 	echo -e "\t$0 -h" 1>&2
 }
 
@@ -92,13 +92,14 @@ if [ $# -eq 1 ]; then
 		exit 0
 	fi
 fi
-if [ $# -ne 2 ]; then
+if [ $# -ne 3 ]; then
 	usage
 	exit 1
 fi
 
 SRC_IMG_FILE=$1
 OUTPUT_DIR=$2
+LABEL_PREF=$3
 
 name=$(basename $SRC_IMG_FILE | rev | cut -d'.' -f2- | rev)
 mkdir -p $OUTPUT_DIR
@@ -145,7 +146,7 @@ entry=$(printf "%s\n" $palette_tbl | grep '^BG')
 rgb=$(echo $entry | cut -d'#' -f2)
 hex=$(echo $entry | cut -d'#' -f3)
 cat <<EOF >$OUTPUT_DIR/${name}_palettes.s
-PaletteBG:
+${LABEL_PREF}PaletteBG:
 	dc.w	0x0000			/* 0: Transparent */
 	dc.w	$hex			/* 1: $rgb */
 	dc.w	0x0000			/* 2: None */
@@ -166,7 +167,7 @@ PaletteBG:
 EOF
 for plane in 'PB' 'PA'; do
 	cat <<EOF >>$OUTPUT_DIR/${name}_palettes.s
-Palette${plane}:
+${LABEL_PREF}Palette${plane}:
 	dc.w	0x0000			/* 0: Transparent */
 EOF
 	entry_list=$(printf "%s\n" $palette_tbl | grep "^$plane")
@@ -192,7 +193,7 @@ plane_addr_list="PB#C000 PA#E000"
 palette_hex_list="PB#2 PA#4"
 for plane in 'PB' 'PA'; do
 	plane_addr=$(printf "%s\n" $plane_addr_list | grep "^$plane" | cut -d'#' -f2)
-	echo "Draw${plane}:" >>$OUTPUT_DIR/${name}_draw.s
+	echo "${LABEL_PREF}Draw${plane}:" >>$OUTPUT_DIR/${name}_draw.s
 	for cropped_file in $(ls $OUTPUT_DIR/${name}_*.txt); do
 		tile_th_str=$(echo $cropped_file | rev | cut -d'.' -f2 | cut -d'_' -f1 | rev)
 		if [ "$tile_th_str" = "0000" ]; then
@@ -233,7 +234,7 @@ for plane in 'PB' 'PA'; do
 		echo >>$OUTPUT_DIR/${name}_draw.s
 	fi
 done
-echo "Tiles:" >$OUTPUT_DIR/${name}_tiles.s
+echo "${LABEL_PREF}Tiles:" >$OUTPUT_DIR/${name}_tiles.s
 for tile in $tile_list; do
 	echo -e "\tdc.l\t$tile"
 done >>$OUTPUT_DIR/${name}_tiles.s

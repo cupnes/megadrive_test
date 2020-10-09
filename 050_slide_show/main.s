@@ -135,6 +135,36 @@ ClearVRAM:
 
 	/* Init Palettes */
 	move.l	#0xC0000000, 0xC00004
+	lea	K01PaletteBG, %a0
+	move.l	#(16*3)-1, %d0
+K01PaletteLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, K01PaletteLoop
+
+	/* Init Tiles */
+	move.l	#0x40000000, 0x00C00004
+	lea	K01Tiles, %a0
+	move.w	#(16*352)-1, %d0
+K01TilesLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, K01TilesLoop
+
+	/* Draw Image */
+	.include "koedo219_2_01_320x224_draw.s"
+
+	/* Wait for the right button is pressed */
+K01WaitRBtn:
+	move.b	#0x40, %d0
+	move.b	%d0, 0x00A10009
+	move.b	%d0, 0x00A10003
+	nop
+	nop
+	move.b	0x00A10003, %d0
+	andi.b	#0x08, %d0
+	bne	K01WaitRBtn
+
+	/* Init Palettes */
+	move.l	#0xC0000000, 0xC00004
 	lea	SIPaletteBG, %a0
 	move.l	#(16*3)-1, %d0
 SIPaletteLoop:
@@ -153,7 +183,7 @@ SITilesLoop:
 	.include "self-intro_draw.s"
 
 	/* Wait for the right button is pressed */
-WaitRBtn:
+SIWaitRBtn:
 	move.b	#0x40, %d0
 	move.b	%d0, 0x00A10009
 	move.b	%d0, 0x00A10003
@@ -161,7 +191,7 @@ WaitRBtn:
 	nop
 	move.b	0x00A10003, %d0
 	andi.b	#0x08, %d0
-	bne	WaitRBtn
+	bne	SIWaitRBtn
 
 	/* Init Palettes */
 	move.l	#0xC0000000, 0xC00004
@@ -210,6 +240,8 @@ InitialVDPRegisterSettings:
 	dc.b	0x00			/* 22: DMA source address mid byte */
 	dc.b	0x80			/* 23: DMA source address hi byte, memory-to-VRAM mode (bits 6-7) */
 
+	.include "koedo219_2_01_320x224_palettes.s"
+	.include "koedo219_2_01_320x224_tiles.s"
 	.include "self-intro_palettes.s"
 	.include "self-intro_tiles.s"
 	.include "a_long_vacation_palettes.s"
