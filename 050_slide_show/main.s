@@ -227,6 +227,10 @@ K02TilesLoop:
 	/* Draw Image */
 	.include "koedo219_2_02_320x224_draw.s"
 
+	move.w	#0xFFF0, %d0
+K02Delay:
+	dbra.w	%d0, K02Delay
+
 	/* Wait for left or right button is pressed */
 K02WaitRBtn:
 	move.b	#0x40, 0x00A10003
