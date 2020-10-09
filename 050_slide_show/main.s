@@ -131,6 +131,11 @@ ClearVRAM:
 	move.w	%d0, 0x00C00000
 	dbf	%d7, ClearVRAM
 
+	/* Init GamePad */
+	move.b	#0x40, 0x00A10009
+
+
+
 	/* Main */
 
 	/* [SLIDE 01] */
@@ -156,9 +161,7 @@ K01TilesLoop:
 
 	/* Wait for right button is pressed */
 K01WaitRBtn:
-	move.b	#0x40, %d0
-	move.b	%d0, 0x00A10009
-	move.b	%d0, 0x00A10003
+	move.b	#0x40, 0x00A10003
 	nop
 	nop
 	move.b	0x00A10003, %d0
@@ -190,22 +193,56 @@ SITilesLoop:
 
 	/* Wait for left or right button is pressed */
 SIWaitRBtn:
-	move.b	#0x40, %d0
-	move.b	%d0, 0x00A10009
-	move.b	%d0, 0x00A10003
+	move.b	#0x40, 0x00A10003
 	nop
 	nop
 	move.b	0x00A10003, %d0
 	move.b	%d0, %d1
 	andi.b	#0x08, %d0
-	beq	ALVStart
+	beq	K02Start	/* next slide */
 	andi.b	#0x04, %d1
 	bne	SIWaitRBtn
-	jmp	K01Start
+	jmp	K01Start	/* prev slide */
 
 
 
 	/* [SLIDE 03] */
+	/* Init Palettes */
+K02Start:
+	move.l	#0xC0000000, 0xC00004
+	lea	K02PaletteBG, %a0
+	move.l	#(16*3)-1, %d0
+K02PaletteLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, K02PaletteLoop
+
+	/* Init Tiles */
+	move.l	#0x40000000, 0x00C00004
+	lea	K02Tiles, %a0
+	move.w	#(16*201)-1, %d0
+K02TilesLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, K02TilesLoop
+
+	/* Draw Image */
+	.include "koedo219_2_02_320x224_draw.s"
+
+	/* Wait for left or right button is pressed */
+K02WaitRBtn:
+	move.b	#0x40, 0x00A10003
+	nop
+	nop
+	move.b	0x00A10003, %d0
+	move.b	%d0, %d1
+	andi.b	#0x08, %d0
+	beq	ALVStart	/* next slide */
+	andi.b	#0x04, %d1
+	bne	K02WaitRBtn
+	jmp	SIStart		/* prev slide */
+
+
+
+	/* [SLIDE 04] */
 	/* Init Palettes */
 ALVStart:
 	move.l	#0xC0000000, 0xC00004
@@ -228,15 +265,13 @@ ALVTilesLoop:
 
 	/* Wait for left button is pressed */
 ALVWaitRBtn:
-	move.b	#0x40, %d0
-	move.b	%d0, 0x00A10009
-	move.b	%d0, 0x00A10003
+	move.b	#0x40, 0x00A10003
 	nop
 	nop
 	move.b	0x00A10003, %d0
 	andi.b	#0x04, %d0
 	bne	ALVWaitRBtn
-	jmp	SIStart
+	jmp	K02Start	/* prev slide */
 
 	jmp.s	.
 
@@ -270,5 +305,7 @@ InitialVDPRegisterSettings:
 	.include "koedo219_2_01_320x224_tiles.s"
 	.include "self-intro_palettes.s"
 	.include "self-intro_tiles.s"
+	.include "koedo219_2_02_320x224_palettes.s"
+	.include "koedo219_2_02_320x224_tiles.s"
 	.include "a_long_vacation_palettes.s"
 	.include "a_long_vacation_tiles.s"
