@@ -328,7 +328,7 @@ K04WaitRBtn:
 	move.b	0x00A10003, %d0
 	move.b	%d0, %d1
 	andi.b	#0x08, %d0
-	beq	ALVStart	/* next slide */
+	beq	K05Start	/* next slide */
 	andi.b	#0x04, %d1
 	bne	K04WaitRBtn
 	jmp	K03Start	/* prev slide */
@@ -336,6 +336,46 @@ K04WaitRBtn:
 
 
 	/* [SLIDE 06] */
+	/* Init Palettes */
+K05Start:
+	move.l	#0xC0000000, 0xC00004
+	lea	K05PaletteBG, %a0
+	move.l	#(16*3)-1, %d0
+K05PaletteLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, K05PaletteLoop
+
+	/* Init Tiles */
+	move.l	#0x40000000, 0x00C00004
+	lea	K05Tiles, %a0
+	move.w	#(16*586)-1, %d0
+K05TilesLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, K05TilesLoop
+
+	/* Draw Image */
+	.include "koedo219_2_05_320x224_draw.s"
+
+	move.w	#0xFFF0, %d0
+K05Delay:
+	dbra.w	%d0, K05Delay
+
+	/* Wait for left or right button is pressed */
+K05WaitRBtn:
+	move.b	#0x40, 0x00A10003
+	nop
+	nop
+	move.b	0x00A10003, %d0
+	move.b	%d0, %d1
+	andi.b	#0x08, %d0
+	beq	ALVStart	/* next slide */
+	andi.b	#0x04, %d1
+	bne	K05WaitRBtn
+	jmp	K03Start	/* prev slide */
+
+
+
+	/* [SLIDE 07] */
 	/* Init Palettes */
 ALVStart:
 	move.l	#0xC0000000, 0xC00004
@@ -364,7 +404,7 @@ ALVWaitRBtn:
 	move.b	0x00A10003, %d0
 	andi.b	#0x04, %d0
 	bne	ALVWaitRBtn
-	jmp	K04Start	/* prev slide */
+	jmp	K05Start	/* prev slide */
 
 	jmp.s	.
 
