@@ -528,7 +528,7 @@ K09WaitRBtn:
 	move.b	0x00A10003, %d0
 	move.b	%d0, %d1
 	andi.b	#0x08, %d0
-	beq	ALVStart	/* next slide */
+	beq	K10Start	/* next slide */
 	andi.b	#0x04, %d1
 	bne	K09WaitRBtn
 	jmp	K08Start	/* prev slide */
@@ -537,33 +537,37 @@ K09WaitRBtn:
 
 	/* [SLIDE 11] */
 	/* Init Palettes */
-ALVStart:
+K10Start:
 	move.l	#0xC0000000, 0xC00004
-	lea	ALVPaletteBG, %a0
+	lea	K10PaletteBG, %a0
 	move.l	#(16*3)-1, %d0
-ALVPaletteLoop:
+K10PaletteLoop:
 	move.w	(%a0)+, 0x00C00000
-	dbra	%d0, ALVPaletteLoop
+	dbra	%d0, K10PaletteLoop
 
 	/* Init Tiles */
 	move.l	#0x40000000, 0x00C00004
-	lea	ALVTiles, %a0
-	move.w	#(16*1250)-1, %d0
-ALVTilesLoop:
+	lea	K10Tiles, %a0
+	move.w	#(16*712)-1, %d0
+K10TilesLoop:
 	move.w	(%a0)+, 0x00C00000
-	dbra	%d0, ALVTilesLoop
+	dbra	%d0, K10TilesLoop
 
 	/* Draw Image */
-	.include "a_long_vacation_draw.s"
+	.include "koedo219_2_10_320x224_draw.s"
+
+	move.w	#0xFFF0, %d0
+K10Delay:
+	dbra.w	%d0, K10Delay
 
 	/* Wait for left button is pressed */
-ALVWaitRBtn:
+K10WaitRBtn:
 	move.b	#0x40, 0x00A10003
 	nop
 	nop
 	move.b	0x00A10003, %d0
 	andi.b	#0x04, %d0
-	bne	ALVWaitRBtn
+	bne	K10WaitRBtn
 	jmp	K09Start	/* prev slide */
 
 	jmp.s	.
@@ -616,5 +620,3 @@ InitialVDPRegisterSettings:
 	.include "koedo219_2_09_320x224_tiles.s"
 	.include "koedo219_2_10_320x224_palettes.s"
 	.include "koedo219_2_10_320x224_tiles.s"
-	.include "a_long_vacation_palettes.s"
-	.include "a_long_vacation_tiles.s"
