@@ -159,6 +159,10 @@ K01TilesLoop:
 	/* Draw Image */
 	.include "koedo219_2_01_320x224_draw.s"
 
+	move.w	#0xFFF0, %d0
+K01Delay:
+	dbra.w	%d0, K01Delay
+
 	/* Wait for right button is pressed */
 K01WaitRBtn:
 	move.b	#0x40, 0x00A10003
@@ -190,6 +194,10 @@ SITilesLoop:
 
 	/* Draw Image */
 	.include "self-intro_draw.s"
+
+	move.w	#0xFFF0, %d0
+SIDelay:
+	dbra.w	%d0, SIDelay
 
 	/* Wait for left or right button is pressed */
 SIWaitRBtn:
@@ -239,7 +247,7 @@ K02WaitRBtn:
 	move.b	0x00A10003, %d0
 	move.b	%d0, %d1
 	andi.b	#0x08, %d0
-	beq	ALVStart	/* next slide */
+	beq	K03Start	/* next slide */
 	andi.b	#0x04, %d1
 	bne	K02WaitRBtn
 	jmp	SIStart		/* prev slide */
@@ -247,6 +255,46 @@ K02WaitRBtn:
 
 
 	/* [SLIDE 04] */
+	/* Init Palettes */
+K03Start:
+	move.l	#0xC0000000, 0xC00004
+	lea	K03PaletteBG, %a0
+	move.l	#(16*3)-1, %d0
+K03PaletteLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, K03PaletteLoop
+
+	/* Init Tiles */
+	move.l	#0x40000000, 0x00C00004
+	lea	K03Tiles, %a0
+	move.w	#(16*560)-1, %d0
+K03TilesLoop:
+	move.w	(%a0)+, 0x00C00000
+	dbra	%d0, K03TilesLoop
+
+	/* Draw Image */
+	.include "koedo219_2_03_320x224_draw.s"
+
+	move.w	#0xFFF0, %d0
+K03Delay:
+	dbra.w	%d0, K03Delay
+
+	/* Wait for left or right button is pressed */
+K03WaitRBtn:
+	move.b	#0x40, 0x00A10003
+	nop
+	nop
+	move.b	0x00A10003, %d0
+	move.b	%d0, %d1
+	andi.b	#0x08, %d0
+	beq	ALVStart	/* next slide */
+	andi.b	#0x04, %d1
+	bne	K03WaitRBtn
+	jmp	K02Start	/* prev slide */
+
+
+
+	/* [SLIDE 05] */
 	/* Init Palettes */
 ALVStart:
 	move.l	#0xC0000000, 0xC00004
@@ -275,7 +323,7 @@ ALVWaitRBtn:
 	move.b	0x00A10003, %d0
 	andi.b	#0x04, %d0
 	bne	ALVWaitRBtn
-	jmp	K02Start	/* prev slide */
+	jmp	K03Start	/* prev slide */
 
 	jmp.s	.
 
@@ -311,5 +359,21 @@ InitialVDPRegisterSettings:
 	.include "self-intro_tiles.s"
 	.include "koedo219_2_02_320x224_palettes.s"
 	.include "koedo219_2_02_320x224_tiles.s"
+	.include "koedo219_2_03_320x224_palettes.s"
+	.include "koedo219_2_03_320x224_tiles.s"
+	.include "koedo219_2_04_320x224_palettes.s"
+	.include "koedo219_2_04_320x224_tiles.s"
+	.include "koedo219_2_05_320x224_palettes.s"
+	.include "koedo219_2_05_320x224_tiles.s"
+	.include "koedo219_2_06_320x224_palettes.s"
+	.include "koedo219_2_06_320x224_tiles.s"
+	.include "koedo219_2_07_320x224_palettes.s"
+	.include "koedo219_2_07_320x224_tiles.s"
+	.include "koedo219_2_08_320x224_palettes.s"
+	.include "koedo219_2_08_320x224_tiles.s"
+	.include "koedo219_2_09_320x224_palettes.s"
+	.include "koedo219_2_09_320x224_tiles.s"
+	.include "koedo219_2_10_320x224_palettes.s"
+	.include "koedo219_2_10_320x224_tiles.s"
 	.include "a_long_vacation_palettes.s"
 	.include "a_long_vacation_tiles.s"
