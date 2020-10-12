@@ -1,4 +1,4 @@
-TARGET = wait_btn_input
+TARGET = koedo219
 OBJS = main.o
 
 GENDEV = /opt/gendev
