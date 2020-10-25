@@ -1,6 +1,6 @@
 S10PaletteBG:
 	dc.w	0x0000			/* 0: Transparent */
-	dc.w	0x0860			/* 1: 00728F */
+	dc.w	0x0000			/* 1: 000000 */
 	dc.w	0x0000			/* 2: None */
 	dc.w	0x0000			/* 3: None */
 	dc.w	0x0000			/* 4: None */
