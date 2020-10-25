@@ -1,4 +1,4 @@
-TARGET = slide_show_demo
+TARGET = osc_2020_online_aizu_yohgami
 OBJS = main.o
 
 GENDEV = /opt/gendev
